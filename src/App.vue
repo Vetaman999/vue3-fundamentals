@@ -1,7 +1,9 @@
 <script setup>
+import { ref, computed } from 'vue'
+
 /* interpolación de texto {{  }} */
 /* v-bind o : que no nos permite la interpolación de texto, es utilizar el {{  }} en atributos*/
-const arrayTitle = ["interpolacion", "v-if", "v-for", "v-if v-for", "v-on @"];
+const arrayTitle = ["interpolacion", "v-if", "v-for", "v-if v-for", "v-on @", "EventoClick", "propiedades del click", "contador"];
 const name = "HUGO";
 const lastname = "quispe";
 /* v-if */
@@ -42,15 +44,81 @@ const objetoRopa = {
   id: 1,
 };
 
-/* v-on || methods*/
+/* v-on || @ */
+/*  methods || funcion*/
 const handleClick = (message) => {
   console.log(message);
-};  
+};
+
+/* contador con v-on -> usar eventos del DOM */
+/* ref -> la variable es reactiva */
+
+const count = ref(0);
+const arrayNumFav = ref([]);
+
+const increase = () => {
+  console.log('Incrementar');
+  count.value++;
+}
+
+const decrease = () => {
+  console.log('Sesincrementar');
+  count.value--;
+}
+
+const reset = () => {
+  console.log('Resetear');
+  count.value = 0;
+}
+
+const classCounter = computed(() => {
+  if (count.value > 0) {
+    return "positive";
+  }
+  if (count.value < 0) {
+    return "negative";
+  }
+  if (count.value == 0) {
+    return "zero";
+  }
+})
+
+const addList = () => {
+  arrayNumFav.value.push(count.value);
+}
+
+const disabledBtn = computed(() => {
+  const numSearch = arrayNumFav.value.find((num) => num === count.value)
+  if (numSearch === 0) return true;
+  return (numSearch ? true : false)
+})
+
 </script>
 
 <template>
-  <!-- v-on - @click -->
+  <!-- v-on - @ -->
   <h1 class="title">{{ arrayTitle[4].toLocaleUpperCase() }}</h1>
+  <!-- evento de CLICK -->
+  <!-- CONTADOR -->
+
+  <h1 class="title">{{ arrayTitle[6].toLocaleUpperCase() }}</h1>
+
+  <h2 :class="classCounter"> {{ count }} </h2>
+
+  <button @click="increase">Incrementar</button>
+  <button @click="decrease">Sesincrementar</button>
+  <button @click="reset">Resetear</button>
+  <button @click="addList" :disabled="disabledBtn">Add</button>
+  <br />
+  {{ arrayNumFav }}
+  <ul>
+    <li v-for="num in arrayNumFav" :key="num">
+      <h2>{{ num }}</h2>
+    </li>
+  </ul>
+
+  <!-- PROPIEDADES DEL CLICK -->
+  <h1 class="title">{{ arrayTitle[5].toLocaleUpperCase() }}</h1>
   <button v-on:click.right="handleClick('Texto Right')">Activame Right</button>
   <button @click.left="handleClick('Texto Left')">Activame Left</button>
   <button @click.middle="handleClick('Texto Middle')">Activame Middle</button>
@@ -116,5 +184,17 @@ const handleClick = (message) => {
 <style scoped>
 .title {
   text-align: center;
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
+
+.zero {
+  color: orange;
 }
 </style>
